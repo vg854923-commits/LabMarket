@@ -1,0 +1,52 @@
+{% extends 'base.html' %}
+{% block title %}Admin Dashboard | LabMarket{% endblock %}
+{% block content %}
+<section class="section admin-page">
+<p class="eyebrow">ADMIN CONTROL CENTER · CAPSTONE</p>
+<h1>LabMarket Dashboard</h1>
+<p style="color:var(--muted)">Equipment catalogue, bookings, sensor status, usage logs, overdue alerts and utilization in one place.</p>
+
+<div class="admin-links"><a href="{{url_for('admin_report')}}">📊 Reports & Analytics</a><a href="{{url_for('products')}}">🧪 Equipment Catalogue</a><a href="{{url_for('availability')}}">📅 Availability</a><a href="{{url_for('feedback')}}">⭐ Feedback</a></div>
+<div class="stats">
+<div><span>Customers</span><strong>{{users|selectattr('role','equalto','customer')|list|length}}</strong></div>
+<div><span>Equipment</span><strong>{{products|length}}</strong></div>
+<div><span>Total Rentals</span><strong>{{rentals|length}}</strong></div>
+<div><span>Avg Utilization</span><strong>{{utilization}}%</strong></div>
+</div>
+
+{% if overdue %}
+<div class="panel" style="border-left:5px solid #dc2626"><h2>⚠ Overdue Alerts</h2>
+{% for r in overdue %}<p><strong>{{r['rental_no']}}</strong> — {{r['customer']}} — due {{r['end_date']}}</p>{% endfor %}</div>
+{% endif %}
+
+<div class="panel"><h2>📡 Current Equipment Status</h2>
+<div class="grid">
+{% for p in products %}
+<article class="card"><div class="body"><span>{{p['category']}}</span><h3>{{p['name']}}</h3>
+<p>Status: <strong>{{p['current_status']}}</strong></p>
+<p>Utilization: {{p['utilization']}}% · Temp: {{p['temperature']}}°C</p>
+<p><small>Last sensor update: {{p['last_seen']}}</small></p>
+<form method="post" action="{{url_for('update_status',pid=p['id'])}}">
+<select name="status"><option>Available</option><option>In Use</option><option>Maintenance</option><option>Offline</option></select>
+<button type="submit">Update Status</button></form></div></article>
+{% endfor %}
+</div></div>
+
+<div id="rentals" class="table-wrap"><h2>📦 Customer Rental Records</h2>
+<table><thead><tr><th>Rental</th><th>Customer Details</th><th>Equipment</th><th>Dates</th><th>Purpose</th><th>Total</th><th>Payment</th><th>Status</th><th>Action</th></tr></thead>
+<tbody>{% for r in rentals %}<tr>
+<td><strong>{{r['rental_no']}}</strong></td><td><strong>{{r['customer_name'] or r['customer']}}</strong><small>{{r['email']}}</small><small>📞 {{r['contact_number'] or '-'}}</small><small>🏠 {{r['address'] or '-'}}</small></td>
+<td>{% for item in rental_items[r['id']] %}<div>{{item['name']}} × {{item['quantity']}}</div>{% endfor %}</td>
+<td>{{r['start_date']}} → {{r['end_date']}}</td><td>{{r['purpose']}}</td><td>₹{{'%.0f'|format(r['total'])}}</td><td>{{r['payment_method']}}<br><small>{{r['payment_status']}}{% if r['card_last4'] %} · ****{{r['card_last4'] }}{% endif %}</small></td><td>{{r['status']}}</td>
+<td>{% if r['status'] in ['Booked','Checked In'] %}<form method="post" action="{{url_for('return_rental',rid=r['id'])}}"><button>Mark Returned</button></form>{% endif %}</td>
+</tr>{% endfor %}</tbody></table></div>
+
+<div class="table-wrap" style="margin-top:25px"><h2>📝 Usage / Audit Log</h2>
+<table><thead><tr><th>Time</th><th>Customer Details</th><th>Equipment</th><th>Action</th><th>Notes</th></tr></thead>
+<tbody>{% for l in logs %}<tr><td>{{l['logged_at']}}</td><td>{{l['customer']}}</td><td>{{l['equipment'] or '-'}}</td><td>{{l['action']}}</td><td>{{l['notes']}}</td></tr>{% else %}<tr><td colspan="5">No logs yet.</td></tr>{% endfor %}</tbody></table></div>
+
+<div class="table-wrap" style="margin-top:25px"><h2>👥 Customers</h2>
+<table><thead><tr><th>Name</th><th>Email</th><th>Contact Number</th><th>Address</th><th>Role</th></tr></thead>
+<tbody>{% for u in users %}<tr><td>{{u['name']}}</td><td>{{u['email']}}</td><td>{{u['phone'] or '-'}}</td><td>{{u['address'] or '-'}}</td><td>{{u['role']}}</td></tr>{% endfor %}</tbody></table></div>
+</section>
+{% endblock %}

@@ -1,0 +1,21 @@
+{% extends 'base.html' %}{% block content %}
+<section class="hero"><div class="hero-content"><p class="eyebrow">SMART LAB EQUIPMENT RENTAL</p><h1>Equipment that<br><em>supports your experiment.</em></h1><p>Find, rent and manage laboratory equipment in one place — with customer accounts, rental booking and an admin database dashboard.</p><a class="btn" href="{{ url_for('products') }}">Explore Equipment →</a></div></section>
+<section class="section"><div class="section-heading"><p class="eyebrow">EXPLORE</p><h2>Equipment Categories</h2></div><div class="category-grid">
+<a class="category-card" href="{{ url_for('products',q='Microscopy') }}"><span>🔬</span><h3>Microscopy</h3><small>View equipment →</small></a>
+<a class="category-card" href="{{ url_for('products',q='Measurement') }}"><span>⚖</span><h3>Measurement</h3><small>View equipment →</small></a>
+<a class="category-card" href="{{ url_for('products',q='Heating') }}"><span>♨</span><h3>Heating</h3><small>View equipment →</small></a>
+<a class="category-card" href="{{ url_for('products',q='Molecular') }}"><span>🧬</span><h3>Molecular</h3><small>View equipment →</small></a>
+</div></section>
+<section class="section soft"><div class="section-heading"><p class="eyebrow">AVAILABLE NOW</p><h2>Featured Equipment</h2></div><div class="product-grid">{% for p in products %}<article class="product-card"><a class="product-image" href="{{ url_for('product',pid=p['id']) }}"><img src="{{ url_for('static',filename='images/'+p['image']) }}" alt="{{ p['name'] }}"></a><div class="product-info"><small>{{ p['category'] }} • {{ p['stock'] }} available</small><h3>{{ p['name'] }}</h3><p class="description">{{ p['description'] }}</p><div class="price-row"><strong>₹{{ '%.0f'|format(p['daily_rent']) }}/day</strong><a class="mini-btn" href="{{ url_for('product',pid=p['id']) }}">View & Rent</a></div></div></article>{% endfor %}</div></section>
+<section id="why" class="section promo"><div><p class="eyebrow" style="color:#8fb1ff">WHY LABMARKET?</p><h2>Simple rental management.</h2><p>Users can create an account, select equipment, add it to a rental cart, choose rental dates, select a payment method, confirm the booking and track their rentals. Admin can view customers and exactly what equipment each customer rented.</p></div></section>
+
+<section class="section" id="capstone">
+  <div class="section-heading"><p class="eyebrow">CAPSTONE WORKFLOW</p><h2>From booking to lab operations</h2></div>
+  <div class="grid">
+    <div class="panel"><h3>📅 Booking Calendar</h3><p>Checks date conflicts and stock before a rental is confirmed.</p></div>
+    <div class="panel"><h3>🔲 QR Check-in</h3><p>Every rental receives a QR code for lab-desk check-in.</p></div>
+    <div class="panel"><h3>📡 Status Sensor</h3><p>Simulated sensor telemetry shows current status, utilization and last-seen time.</p></div>
+    <div class="panel"><h3>⚠ Overdue Alerts</h3><p>Admin sees overdue rentals and can mark equipment returned.</p></div>
+  </div>
+</section>
+{% endblock %}

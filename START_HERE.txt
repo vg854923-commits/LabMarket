@@ -1,0 +1,29 @@
+LABMARKET - START HERE
+
+1. Extract this ZIP.
+2. Open the extracted folder directly in VS Code.
+3. Open Terminal in that folder.
+4. Run these commands once:
+
+   python -m venv venv
+   venv\Scripts\activate
+   python -m pip install -r requirements.txt
+
+5. Start the website:
+
+   python app.py
+
+6. Open Chrome and visit:
+   http://127.0.0.1:5000
+
+You can also double-click Run_Website.bat.
+
+Customer login:
+student@labmarket.com
+student123
+
+Admin login:
+admin@labmarket.com
+admin123
+
+This version includes 12 products, booking/rental, payment modes, customer details, admin dashboard, availability/prediction features, feedback, database setup, Docker files, and project images.

@@ -1,0 +1,50 @@
+{% extends 'base.html' %}
+{% block title %}Availability Calendar | LabMarket{% endblock %}
+{% block content %}
+<section class="section">
+  <p class="eyebrow">BOOKING CALENDAR · PREDICTIVE AVAILABILITY</p>
+  <h1>Equipment Availability</h1>
+  <p style="color:var(--muted)">Choose dates for your experiment. The system checks overlapping rentals, stock and current equipment status before confirming a booking.</p>
+
+  <div class="panel">
+    <h2>📅 Booking Calendar</h2>
+    <div style="display:grid;grid-template-columns:repeat(7,1fr);gap:8px;margin-top:15px">
+      <strong>Mon</strong><strong>Tue</strong><strong>Wed</strong><strong>Thu</strong><strong>Fri</strong><strong>Sat</strong><strong>Sun</strong>
+      {% for day in range(1,29) %}
+        <div style="padding:12px;border:1px solid #e4e9f2;border-radius:10px;background:#fff;text-align:center">
+          <strong>{{day}}</strong><br><small style="color:#667085">Check on checkout</small>
+        </div>
+      {% endfor %}
+    </div>
+  </div>
+
+  <div class="grid">
+    {% for p in products %}
+    <article class="card">
+      <img src="{{url_for('static',filename='images/'+p['image'])}}" alt="{{p['name']}}">
+      <div class="body">
+        <span>{{p['category']}}</span>
+        <h3>{{p['name']}}</h3>
+        <p>Stock: {{p['stock']}} · ₹{{'%.0f'|format(p['daily_rent'])}}/day</p>
+        <strong>Current: {{p['status']}}</strong>
+      </div>
+    </article>
+    {% endfor %}
+  </div>
+
+  <div class="table-wrap" style="margin-top:28px">
+    <h2>🔮 Upcoming Reservations / Predictive View</h2>
+    <p style="color:var(--muted)">The booking engine predicts availability from existing reservations and available stock.</p>
+    <table>
+      <thead><tr><th>Equipment</th><th>Start</th><th>End</th><th>Status</th></tr></thead>
+      <tbody>
+      {% for r in upcoming %}
+        <tr><td>{{r['name']}}</td><td>{{r['start_date']}}</td><td>{{r['end_date']}}</td><td>{{r['status']}}</td></tr>
+      {% else %}
+        <tr><td colspan="4">No conflicting reservations are currently scheduled.</td></tr>
+      {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</section>
+{% endblock %}

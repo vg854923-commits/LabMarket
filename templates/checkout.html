@@ -1,0 +1,106 @@
+{% extends 'base.html' %}
+{% block title %}Rental Checkout | LabMarket{% endblock %}
+{% block content %}
+<section class="section">
+  <div class="section-heading">
+    <p class="eyebrow">SECURE RENTAL BOOKING</p>
+    <h1>Complete Your Rental</h1>
+    <p>Choose your rental dates and preferred payment method.</p>
+  </div>
+
+  <div class="checkout-layout">
+    <form class="checkout-form" method="post" id="checkoutForm">
+      <div class="panel" style="margin-bottom:18px">
+        <h2>👤 Customer Details</h2>
+        <label>Customer Name
+          <input name="customer_name" type="text" value="{{ session.get('user_name','') }}" placeholder="Enter customer name" required>
+        </label>
+        <label>📞 Contact Number
+          <input name="contact_number" type="tel" inputmode="numeric" maxlength="15" placeholder="Enter contact number" required>
+        </label>
+        <label>🏠 Address
+          <textarea name="address" rows="3" placeholder="Enter complete address" required></textarea>
+        </label>
+      </div>
+
+      <label>Rental Start Date
+        <input name="start_date" type="date" required>
+      </label>
+
+      <p class="note">💡 Your total is automatically calculated from the number of rental days.</p>
+
+      <label>Rental End Date
+        <input name="end_date" type="date" required>
+      </label>
+
+      <label>Purpose / Experiment
+        <textarea name="purpose" placeholder="Example: laboratory experiment / project work" required></textarea>
+      </label>
+
+      <div class="payment-box">
+        <h2>Payment Method</h2>
+        <p class="note">This college prototype simulates payment. No real money is charged.</p>
+
+        <label class="payment-option">
+          <input type="radio" name="payment_method" value="Online Payment" checked>
+          <span><strong>📱 UPI / Online Payment</strong><small>Demo online payment</small></span>
+        </label>
+
+        <label class="payment-option">
+          <input type="radio" name="payment_method" value="Debit Card">
+          <span><strong>💳 Debit Card</strong><small>Demo card payment</small></span>
+        </label>
+
+        <label class="payment-option">
+          <input type="radio" name="payment_method" value="Credit Card">
+          <span><strong>💳 Credit Card</strong><small>Demo card payment</small></span>
+        </label>
+
+        <label class="payment-option">
+          <input type="radio" name="payment_method" value="Cash on Delivery">
+          <span><strong>💵 Cash on Delivery</strong><small>Payment remains pending until received</small></span>
+        </label>
+
+        <div id="cardFields" class="card-fields">
+          <label>Cardholder Name
+            <input name="card_name" type="text" placeholder="Enter cardholder name">
+          </label>
+          <label>Card Number
+            <input name="card_number" type="text" inputmode="numeric" maxlength="19" placeholder="1234 5678 9012 3456">
+          </label>
+          <div class="two-col">
+            <label>Expiry
+              <input name="expiry" type="text" placeholder="MM/YY" maxlength="5">
+            </label>
+            <label>CVV
+              <input name="cvv" type="password" inputmode="numeric" maxlength="4" placeholder="•••">
+            </label>
+          </div>
+          <p class="note">For the demo, card information is validated but never saved. Only the last 4 digits are recorded.</p>
+        </div>
+      </div>
+
+      <button class="btn" type="submit">Confirm Rental & Payment</button>
+    </form>
+
+    <aside class="summary">
+      <h2>Your Equipment</h2>
+      {% for p,q in rows %}
+      <div><span>{{p['name']}} × {{q}}</span><span>₹{{'%.0f'|format(p['daily_rent']*q)}}</span></div>
+      {% endfor %}
+      <div><span>Daily rental</span><strong>₹{{'%.0f'|format(total)}}</strong></div><div><span>Final total</span><strong>Calculated after dates are selected</strong></div>
+    </aside>
+  </div>
+</section>
+
+<script>
+const paymentRadios = document.querySelectorAll('input[name="payment_method"]');
+const cardFields = document.getElementById('cardFields');
+function toggleCardFields(){
+  const selected = document.querySelector('input[name="payment_method"]:checked')?.value;
+  cardFields.style.display = (selected === 'Debit Card' || selected === 'Credit Card') ? 'block' : 'none';
+}
+paymentRadios.forEach(r => r.addEventListener('change', toggleCardFields));
+toggleCardFields();
+</script>
+{% endblock %}
